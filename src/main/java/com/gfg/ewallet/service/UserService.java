@@ -12,5 +12,5 @@ public interface UserService {
 
     public void deleteUser(String userId);
 
-    public void updateUser(UserRequest userRequest);
+    public UserResponse updateUser(UserRequest userRequest,String userId);
 }
