@@ -203,3 +203,18 @@ FAILURE -> BAD_USER_ID
 4. Notification
 
 No APIs.
+
+
+
+Transaction flow:
+
+
+- user and wallet are created.
+- user calls the userService to send money to another user
+- UserService triggers an API which will create a transaction. in which it will pass sender as the user
+    and receiver as obtained from user.
+- TransactionService will accept the transaction request and post a message for wallet update
+- WalletService will perform wallet update operation, and publishes the wallet operation status.
+- Transaction consumer will fetch walletUpdate message and update the status of the appropriate transaction.
+- Post status update, transactionService will release notification message
+- NotificationService will receive the notification and send appropriate EMails.

@@ -5,9 +5,7 @@ import com.gfg.ewallet.EwalletUserException;
 import com.gfg.ewallet.domain.User;
 import com.gfg.ewallet.repository.UserRepository;
 import com.gfg.ewallet.service.UserService;
-import com.gfg.ewallet.service.resource.UserRequest;
-import com.gfg.ewallet.service.resource.UserResponse;
-import com.gfg.ewallet.service.resource.WalletResponse;
+import com.gfg.ewallet.service.resource.*;
 import lombok.extern.log4j.Log4j;
 import org.hibernate.DuplicateMappingException;
 import org.slf4j.Logger;
@@ -51,6 +49,8 @@ public class UserServiceImpl implements UserService {
 
     @Value("${balance.url}")
     private String walletUri;
+
+    private String transactionUrl="http://localhost:8003/transfer";
 
     Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -134,5 +134,25 @@ public class UserServiceImpl implements UserService {
             throw new EwalletUserException("EWALLET_SERVICE_EXCEPTION", "Please try again in sometime!");
         }
         return response;
+    }
+
+    @Override
+    public void performTransaction(UserTransactionRequest userTransactionRequest,String userId) {
+
+        TransactionRequest transactionRequest=new TransactionRequest();
+        transactionRequest.setSenderId(Long.valueOf(userId));
+        transactionRequest.setReceiverId(userTransactionRequest.getReceiverId());
+        transactionRequest.setAmount(userTransactionRequest.getAmount());
+        restTemplate.postForEntity(transactionUrl,transactionRequest,Object.class);
+
+    }
+
+    @Override
+    public void updateBalance(UserTransactionRequest userTransactionRequest, String userId) {
+        TransactionRequest transactionRequest=new TransactionRequest();
+        transactionRequest.setSenderId(-99L);
+        transactionRequest.setReceiverId(Long.valueOf(userId));
+        transactionRequest.setAmount(userTransactionRequest.getAmount());
+        restTemplate.postForEntity(transactionUrl,transactionRequest,Object.class);
     }
 }

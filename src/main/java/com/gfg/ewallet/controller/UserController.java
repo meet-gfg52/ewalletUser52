@@ -3,6 +3,7 @@ package com.gfg.ewallet.controller;
 import com.gfg.ewallet.service.UserService;
 import com.gfg.ewallet.service.resource.UserRequest;
 import com.gfg.ewallet.service.resource.UserResponse;
+import com.gfg.ewallet.service.resource.UserTransactionRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,4 +38,17 @@ public class UserController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @PostMapping(value="{userId}/transfer")
+    public ResponseEntity<?> transfer(@RequestBody UserTransactionRequest userTransactionRequest,@PathVariable String userId){
+        userService.performTransaction(userTransactionRequest,userId);
+        return new ResponseEntity<>(null,HttpStatus.ACCEPTED);
+
+    }
+
+
+    @PostMapping(value="{userId}/wallet/transfer")
+    public ResponseEntity<?> userWalletUpdate(@RequestBody UserTransactionRequest userTransactionRequest,@PathVariable String userId){
+        userService.updateBalance(userTransactionRequest,userId);
+        return new ResponseEntity<>(null,HttpStatus.ACCEPTED);
+    }
 }
